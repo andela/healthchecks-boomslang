@@ -21,7 +21,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
 USE_PAYMENTS = False
-REGISTRATION_OPEN = True
+REGISTRATION_OPEN = False
 
 
 INSTALLED_APPS = (
@@ -121,7 +121,7 @@ USE_L10N = True
 USE_TZ = True
 
 SITE_ROOT = "http://localhost:8000"
-SITE_NAME = "healthchecks.io"
+SITE_NAME = "My Monitoring Project"
 PING_ENDPOINT = SITE_ROOT + "/ping/"
 PING_EMAIL_DOMAIN = HOST
 STATIC_URL = '/static/'
