@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOST = "localhost"
 SECRET_KEY = "---"
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["hc-bs-staging.herokuapp.com"]
 DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
 USE_PAYMENTS = False
 REGISTRATION_OPEN = False
@@ -154,5 +154,6 @@ PUSHBULLET_CLIENT_SECRET = None
 
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
+
 else:
     warnings.warn("local_settings.py not found, using defaults")
