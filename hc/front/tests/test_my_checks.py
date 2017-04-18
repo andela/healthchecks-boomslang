@@ -25,11 +25,9 @@ class MyChecksTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/checks/")
 
-        # Desktop
-        self.assertContains(r, "icon-up")
+        ### Assert Desktop green check
 
-        # Mobile
-        self.assertContains(r, "label-success")
+        ### Assert Mobile green check
 
     def test_it_shows_red_check(self):
         self.check.last_ping = timezone.now() - td(days=3)
@@ -39,11 +37,9 @@ class MyChecksTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/checks/")
 
-        # Desktop
-        self.assertContains(r, "icon-down")
+        ### Assert Desktop red check
 
-        # Mobile
-        self.assertContains(r, "label-danger")
+        ### Assert Mobile red check
 
     def test_it_shows_amber_check(self):
         self.check.last_ping = timezone.now() - td(days=1, minutes=30)
@@ -53,8 +49,6 @@ class MyChecksTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/checks/")
 
-        # Desktop
-        self.assertContains(r, "icon-grace")
+        ### Assert Desktop amber check
 
-        # Mobile
-        self.assertContains(r, "label-warning")
+        ### Assert Mobile amber check

@@ -19,7 +19,7 @@ mock==2.0.0
 packaging==16.8
 pbr==1.10.0
 premailer==2.9.6
-psycopg2==2.6.2
+psycopg2==2.7.1
 pyparsing==2.2.0
 python-dateutil==2.6.0
 pytz==2016.7
