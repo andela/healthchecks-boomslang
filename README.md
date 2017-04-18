@@ -1,8 +1,8 @@
 # healthchecks
 
-[![Build Status](https://travis-ci.org/healthchecks/healthchecks.svg?branch=master)](https://travis-ci.org/healthchecks/healthchecks)
-[![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
 
+[![Build Status](https://travis-ci.org/andela/healthchecks-boomslang.svg?branch=master)](https://travis-ci.org/andela/healthchecks-boomslang)
+[![Coverage Status](https://coveralls.io/repos/github/andela/healthchecks-boomslang/badge.svg?branch=master)](https://coveralls.io/github/andela/healthchecks-boomslang?branch=master)
 
 ![Screenshot of Welcome page](/stuff/screenshots/welcome.png?raw=true "Welcome Page")
 
