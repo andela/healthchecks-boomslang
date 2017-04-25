@@ -7,8 +7,8 @@ from hc.test import BaseTestCase
 class AddPushoverTestCase(BaseTestCase):
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/add_pushover/")
-        self.assertContains(r, "Subscribe with Pushover")
+        resp = self.client.get("/integrations/add_pushover/")
+        self.assertContains(resp, "Subscribe with Pushover")
 
     def test_it_adds_channel(self):
         self.client.login(username="alice@example.org", password="password")
@@ -18,8 +18,8 @@ class AddPushoverTestCase(BaseTestCase):
         session.save()
 
         params = "pushover_user_key=a&nonce=n&prio=0"
-        r = self.client.get("/integrations/add_pushover/?%s" % params)
-        assert r.status_code == 302
+        resp = self.client.get("/integrations/add_pushover/?%s" % params)
+        assert resp.status_code == 302
 
         channels = list(Channel.objects.all())
         assert len(channels) == 1
@@ -28,10 +28,20 @@ class AddPushoverTestCase(BaseTestCase):
     @override_settings(PUSHOVER_API_TOKEN=None)
     def test_it_requires_api_token(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/add_pushover/")
-        self.assertEqual(r.status_code, 404)
+        resp = self.client.get("/integrations/add_pushover/")
+        self.assertEqual(resp.status_code, 404)
 
     ### Test that pushover validates priority
+    def test_push_over_validates_priority(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        session = self.client.session
+        session["po_prio"] = 0
+        session.save()
+
+        params = "pushover_user_key=a&nonce=n&prio=1"
+        resp = self.client.get("/integrations/add_pushover/?%s" % params)
+        assert resp.status_code == 403
 
     def test_it_validates_nonce(self):
         self.client.login(username="alice@example.org", password="password")
