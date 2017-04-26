@@ -26,12 +26,7 @@ class VerifyEmailTestCase(BaseTestCase):
         token = self.channel.make_token()
         url = "/integrations/%s/verify/%s/" % (code, token)
 
-        resp = self.client.get(url)
-        assert resp.status_code == 404
+        r = self.client.get(url)
+        assert r.status_code == 404
 
-    # Test it handles bad token
-    def test_handle_bad_token(self):
-        token = "just a guessed token"
-        url = "/integrations/%s/verify/%s/" % (self.channel.code, token)
-        resp = self.client.get(url)
-        assert resp.status_code == 404
+    ### Test it handles bad token

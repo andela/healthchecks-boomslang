@@ -34,6 +34,7 @@ class AddPushoverTestCase(BaseTestCase):
     ### Test that pushover validates priority
     def test_push_over_validates_priority(self):
         self.client.login(username="alice@example.org", password="password")
+        import ipdb; ipdb.set_trace()
         session = self.client.session
         session["po_nonce"] = "n"
         session.save()
