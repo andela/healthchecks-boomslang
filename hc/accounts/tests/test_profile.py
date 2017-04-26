@@ -21,8 +21,14 @@ class ProfileTestCase(BaseTestCase):
         self.assertTrue(len(token) > 10)
 
         ### Assert that the token is set
+        self.assertEqual()
 
         ### Assert that the email was sent and check email content
+        self.assertEqual(len(mail.outbox), 1)
+        subject = "Set password on HealthCheck.io"
+        self.assertIn("Here's a link to set a password for your account on HealthCheck", mail.outbox[0].body)
+
+
 
     def test_it_creates_api_key(self):
         self.client.login(username="alice@example.org", password="password")

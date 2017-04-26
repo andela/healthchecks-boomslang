@@ -17,20 +17,25 @@ class LoginTestCase(TestCase):
         session.save()
 
         form = {"email": "alice@example.org"}
-
-        r = self.client.post("/accounts/login/", form)
-        assert r.status_code == 302
-
+        resp = self.client.post("/accounts/login/", form)
+        assert resp.status_code == 302
+        # import ipdb;ipdb.set_trace()
         ### Assert that a user was created
-
+        # user = User.create_user("amos", 'amos.omondi@andela.com', 'khskchk')
+        user = User.objects.get(email=form["email"])
+        #created_user = User.objects.find(id=user.id)
+        self.assertTrue(user)
 
         # And email sent
         self.assertEqual(len(mail.outbox), 1)
         subject = "Log in to %s" % settings.SITE_NAME
 
         ### Assert contents of the email body
+        self.assertIn('To log into HealthCheck',mail.outbox[0].body)
 
         ### And check should be associated with the new user
+        self.assertEqual(check.get_status("alice@example.org"), "new")
+
 
     def test_it_pops_bad_link_from_session(self):
         self.client.session["bad_link"] = True
