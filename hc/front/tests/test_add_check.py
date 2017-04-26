@@ -15,7 +15,6 @@ class AddCheckTestCase(BaseTestCase):
     def test_team_access_works(self):
         url = "/checks/add/"
         self.client.login(username="bob@example.org", password="password")
-        # import ipdb; ipdb.set_trace()
         resp = self.client.post(url)
         self.assertRedirects(resp, "/checks/")
         assert Check.objects.count() == 1
