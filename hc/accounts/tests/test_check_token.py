@@ -22,5 +22,8 @@ class CheckTokenTestCase(BaseTestCase):
         self.assertEqual(self.profile.token, "")
 
     ### Login and test it redirects already logged in
+        assert r.status_code == 302
 
     ### Login with a bad token and check that it redirects
+        c = self.client.post("/accounts/check_token/rose/secret-token/")
+        assert c.status_code == 302

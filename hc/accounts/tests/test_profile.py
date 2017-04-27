@@ -21,11 +21,10 @@ class ProfileTestCase(BaseTestCase):
         self.assertTrue(len(token) > 10)
 
         ### Assert that the token is set
-        self.assertEqual()
+        self.assertTrue(token)
 
         ### Assert that the email was sent and check email content
         self.assertEqual(len(mail.outbox), 1)
-        subject = "Set password on HealthCheck.io"
         self.assertIn("Here's a link to set a password for your account on HealthCheck", mail.outbox[0].body)
 
 
@@ -35,7 +34,9 @@ class ProfileTestCase(BaseTestCase):
 
         form = {"create_api_key": "1"}
         r = self.client.post("/accounts/profile/", form)
+        
         ### Test it creates API key
+        self.assertTrue(r)
 
     def test_it_revokes_api_key(self):
         self.client.login(username="alice@example.org", password="password")
@@ -43,6 +44,7 @@ class ProfileTestCase(BaseTestCase):
         form = {"revoke_api_key": "1"}
         r = self.client.post("/accounts/profile/", form)
         ### Test it revokes API key
+        self.assertTrue(r)
 
     def test_it_sends_report(self):
         check = Check(name="Test Check", user=self.alice)
@@ -51,6 +53,9 @@ class ProfileTestCase(BaseTestCase):
         self.alice.profile.send_report()
 
         ###Assert that the email was sent and check email content
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("This is a monthly report sent by HealthCheck.", mail.outbox[0].body)
+
 
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")
@@ -64,10 +69,12 @@ class ProfileTestCase(BaseTestCase):
             member_emails.add(member.user.email)
 
         ### Assert the existence of the member emails
-
         self.assertTrue("frank@example.org" in member_emails)
 
         ###Assert that the email was sent and check email content
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("You will be able to manage their existing monitoring checks and set up new\nones.", mail.outbox[0].body)
+
 
     def test_add_team_member_checks_team_access_allowed_flag(self):
         self.client.login(username="charlie@example.org", password="password")
