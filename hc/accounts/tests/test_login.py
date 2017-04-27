@@ -18,10 +18,11 @@ class LoginTestCase(TestCase):
 
         form = {"email": "alice@example.org"}
         resp = self.client.post("/accounts/login/", form)
-        assert resp.status_code == 302
+        # self.assertEqual(resp.status_code, 302)
+        self.assertRedirects(resp, "/accounts/login_link_sent/")
+
         # import ipdb;ipdb.set_trace()
         ### Assert that a user was created
-        # user = User.create_user("amos", 'amos.omondi@andela.com', 'khskchk')
         user = User.objects.get(email=form["email"])
         #created_user = User.objects.find(id=user.id)
         self.assertTrue(user)
@@ -53,7 +54,9 @@ class LoginTestCase(TestCase):
         form = {"email": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
-        assert r.status_code == 302
+        # self.assertEqual(r.status_code, 302)
+        self.assertRedirects(r, "/accounts/login_link_sent/")
+
 
         # An user should have been created
         self.assertEqual(User.objects.count(), 1)
