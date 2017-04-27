@@ -25,7 +25,7 @@ class ProfileTestCase(BaseTestCase):
 
         ### Assert that the email was sent and check email content
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("Here's a link to set a password for your account on HealthCheck", mail.outbox[0].body)
+        self.assertIn("Here's a link to set a password for your account on My Monitoring Project:", mail.outbox[0].body)
 
 
 
@@ -54,7 +54,7 @@ class ProfileTestCase(BaseTestCase):
 
         ###Assert that the email was sent and check email content
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("This is a monthly report sent by HealthCheck.", mail.outbox[0].body)
+        self.assertIn("This is a monthly report sent by My Monitoring Project.", mail.outbox[0].body)
 
 
     def test_it_adds_team_member(self):
