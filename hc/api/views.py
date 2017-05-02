@@ -89,12 +89,13 @@ def _update(check, spec):
 
     # This needs to be done after saving the check, because of
     # the M2M relation between checks and channels:
+    # import ipdb
+    # ipdb.set_trace()
     if "channels" in spec:
         if spec["channels"] == "*":
             check.assign_all_channels()
         elif spec["channels"] == "":
             check.channel_set.clear()
-
     return check
 
 
