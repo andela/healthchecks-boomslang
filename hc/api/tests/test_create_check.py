@@ -110,18 +110,26 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_handles_invalid_json(self):
         # Make the post request with invalid json data type
         # This is just a placeholder variable
-        import ipdb
-        ipdb.set_trace()
-        resp = {'status_code': 400, 'error': "could not parse request body"}
-        self.assertEqual(resp['status_code'], 400)
-        self.assertEqual(resp["error"], "could not parse request body")
+        form = {"email": "alice@example.org"}
+        resp = self.post(form)
+        self.assertEqual(resp.status_code, 400)
+        # resp = {'status_code': 400, 'error': "could not parse request body"}
+        # self.assertEqual(resp['status_code'], 400)
+        # self.assertEqual(resp["error"], "could not parse request body")
 
     def test_it_rejects_wrong_api_key(self):
         r = self.post({"api_key": "wrong"})
         self.assertEqual(r.status_code, 403)
 
     # Test for the 'timeout is too small' errors
+    def test_timeout_is_too_small(self):
+        self.post({"api_key": "abc", "timeout": 1},
+                  expected_fragment="timeout is too small")
     # Test for the 'timeout is too large' errors
+
+    def test_timeout_is_too_large(self):
+        resp = self.post({"api_key": "abc", "timeout": 36000000},
+                         expected_fragment="timeout is too large")
 
     def test_it_rejects_non_number_timeout(self):
         self.post({"api_key": "abc", "timeout": "oops"},
