@@ -16,15 +16,14 @@ class LoginTestCase(TestCase):
         session["welcome_code"] = str(check.code)
         session.save()
 
-        form = {"email": "alice@example.org"}
+        form = {"email": "joan.awinja@andela.com"}
         resp = self.client.post("/accounts/login/", form)
         # self.assertEqual(resp.status_code, 302)
         self.assertRedirects(resp, "/accounts/login_link_sent/")
 
-        # import ipdb;ipdb.set_trace()
+        
         ### Assert that a user was created
         user = User.objects.get(email=form["email"])
-        #created_user = User.objects.find(id=user.id)
         self.assertTrue(user)
 
         # And email sent

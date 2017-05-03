@@ -33,18 +33,18 @@ class ProfileTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         form = {"create_api_key": "1"}
-        r = self.client.post("/accounts/profile/", form)
+        response = self.client.post("/accounts/profile/", form)
         
         ### Test it creates API key
-        self.assertTrue(r)
+        self.assertTrue(response)
 
     def test_it_revokes_api_key(self):
         self.client.login(username="alice@example.org", password="password")
 
         form = {"revoke_api_key": "1"}
-        r = self.client.post("/accounts/profile/", form)
+        response = self.client.post("/accounts/profile/", form)
         ### Test it revokes API key
-        self.assertTrue(r)
+        self.assertTrue(response)
 
     def test_it_sends_report(self):
         check = Check(name="Test Check", user=self.alice)
