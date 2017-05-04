@@ -26,7 +26,7 @@ class UpdateChannelTestCase(BaseTestCase):
         channel = Channel.objects.get(code=self.channel.code)
         checks = channel.checks.all()
         assert len(checks) == 1
-        assert checks[0].code == self.check.code
+        self.assertEqual(checks[0].code, self.check.code)
 
     def test_team_access_works(self):
         payload = {
@@ -47,7 +47,7 @@ class UpdateChannelTestCase(BaseTestCase):
         r = self.client.post("/integrations/", data=payload)
 
         # self.channel does not belong to charlie, this should fail--
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 403)
 
     def test_it_checks_check_user(self):
         charlies_channel = Channel(user=self.charlie, kind="email")
@@ -62,7 +62,7 @@ class UpdateChannelTestCase(BaseTestCase):
         r = self.client.post("/integrations/", data=payload)
 
         # mc belongs to charlie but self.check does not--
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 403)
 
     def test_it_handles_missing_channel(self):
         # Correct UUID but there is no channel for it:
@@ -70,7 +70,7 @@ class UpdateChannelTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post("/integrations/", data=payload)
-        assert r.status_code == 400
+        self.assertEqual(r.status_code, 400)
 
     def test_it_handles_missing_check(self):
         # check- key has a correct UUID but there's no check object for it
@@ -81,4 +81,4 @@ class UpdateChannelTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post("/integrations/", data=payload)
-        assert r.status_code == 400
+        self.assertEqual(r.status_code, 400)

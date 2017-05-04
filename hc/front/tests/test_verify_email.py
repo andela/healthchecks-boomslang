@@ -14,11 +14,11 @@ class VerifyEmailTestCase(BaseTestCase):
         token = self.channel.make_token()
         url = "/integrations/%s/verify/%s/" % (self.channel.code, token)
 
-        r = self.client.get(url)
-        assert r.status_code == 200, r.status_code
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
 
         channel = Channel.objects.get(code=self.channel.code)
-        assert channel.email_verified
+        self.assertTrue(channel.email_verified)
 
     def test_missing_channel(self):
         # Valid UUID, and even valid token but there is no channel for it:
@@ -27,11 +27,11 @@ class VerifyEmailTestCase(BaseTestCase):
         url = "/integrations/%s/verify/%s/" % (code, token)
 
         resp = self.client.get(url)
-        assert resp.status_code == 404
+        self.assertEqual(resp.status_code, 404)
 
-    # Test it handles bad token
-    def test_handle_bad_token(self):
+    def test_it_handles_bad_token(self):
+        """This test handles bad token"""
         token = "just a guessed token"
         url = "/integrations/%s/verify/%s/" % (self.channel.code, token)
         resp = self.client.get(url)
-        assert resp.status_code == 404
+        self.assertEqual(resp.status_code, 404)

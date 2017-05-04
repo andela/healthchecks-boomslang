@@ -33,13 +33,15 @@ class ListChecksTestCase(BaseTestCase):
         return self.client.get("/api/v1/checks/", HTTP_X_API_KEY="abc")
 
     def test_it_works(self):
-        r = self.get()
+        resp = self.get()
         ### Assert the response status code
+        self.assertEqual(resp.status_code, 200)
 
-        doc = r.json()
+        doc = resp.json()
         self.assertTrue("checks" in doc)
 
         checks = {check["name"]: check for check in doc["checks"]}
+        import ipdb; ipdb.set_trace()
         ### Assert the expected length of checks
         ### Assert the checks Alice 1 and Alice 2's timeout, grace, ping_url, status,
         ### last_ping, n_pings and pause_url

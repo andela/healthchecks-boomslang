@@ -9,15 +9,15 @@ class AddCheckTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         resp = self.client.post(url)
         self.assertRedirects(resp, "/checks/")
-        assert Check.objects.count() == 1
+        self.assertEqual(Check.objects.count(), 1)
 
-    # ##Test that team access works
+    # Test that team access works
     def test_team_access_works(self):
         url = "/checks/add/"
         self.client.login(username="bob@example.org", password="password")
         resp = self.client.post(url)
         self.assertRedirects(resp, "/checks/")
-        assert Check.objects.count() == 1
+        self.assertEqual(Check.objects.count(), 1)
 
     def test_it_rejects_get(self):
         url = "/checks/add/"
