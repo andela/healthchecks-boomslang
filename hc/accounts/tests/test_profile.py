@@ -12,39 +12,41 @@ class ProfileTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         form = {"set_password": "1"}
-        r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 302
+        response = self.client.post("/accounts/profile/", form)
+        assert response.status_code == 302
 
         # profile.token should be set now
         self.alice.profile.refresh_from_db()
+
         token = self.alice.profile.token
+
         self.assertTrue(len(token) > 10)
 
-        ### Assert that the token is set
+        # Assert that the token is set
         self.assertTrue(token)
+        self.assertEqual(response.status_code, 302)
 
-        ### Assert that the email was sent and check email content
+        # Assert that the email was sent and check email content
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("Here's a link to set a password for your account on My Monitoring Project:", mail.outbox[0].body)
-
-
+        self.assertIn("Here's a link to set a password for your account on Healthchecks", mail.outbox[0].body)
 
     def test_it_creates_api_key(self):
         self.client.login(username="alice@example.org", password="password")
 
         form = {"create_api_key": "1"}
         response = self.client.post("/accounts/profile/", form)
-        
-        ### Test it creates API key
-        self.assertTrue(response)
+
+        # Test it creates API key
+        self.assertContains(response, 'The API key has been created!')
 
     def test_it_revokes_api_key(self):
         self.client.login(username="alice@example.org", password="password")
 
         form = {"revoke_api_key": "1"}
+
         response = self.client.post("/accounts/profile/", form)
-        ### Test it revokes API key
-        self.assertTrue(response)
+        # Test it revokes API key
+        self.assertContains(response, "The API key has been revoked!")
 
     def test_it_sends_report(self):
         check = Check(name="Test Check", user=self.alice)
@@ -52,10 +54,9 @@ class ProfileTestCase(BaseTestCase):
 
         self.alice.profile.send_report()
 
-        ###Assert that the email was sent and check email content
+        # Assert that the email was sent and check email content
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("This is a monthly report sent by My Monitoring Project.", mail.outbox[0].body)
-
+        self.assertIn("This is a monthly report sent by Healthchecks.", mail.outbox[0].body)
 
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")
@@ -68,13 +69,12 @@ class ProfileTestCase(BaseTestCase):
         for member in self.alice.profile.member_set.all():
             member_emails.add(member.user.email)
 
-        ### Assert the existence of the member emails
+        # Assert the existence of the member emails
         self.assertTrue("frank@example.org" in member_emails)
 
-        ###Assert that the email was sent and check email content
+        # Assert that the email was sent and check email content
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("You will be able to manage their existing monitoring checks and set up new\nones.", mail.outbox[0].body)
-
 
     def test_add_team_member_checks_team_access_allowed_flag(self):
         self.client.login(username="charlie@example.org", password="password")
