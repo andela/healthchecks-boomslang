@@ -26,7 +26,7 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
 USE_PAYMENTS = False
-REGISTRATION_OPEN = True
+REGISTRATION_OPEN = False
 
 
 INSTALLED_APPS = (
