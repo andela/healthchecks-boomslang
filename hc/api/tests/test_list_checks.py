@@ -83,4 +83,4 @@ class ListChecksTestCase(BaseTestCase):
     def test_it_accepts_api_key_from_request_body(self):
         payload = json.dumps({"api_key": "abc"})
         # Test that it accepts an api_key in the request
-        self.assertTrue(payload)
+        self.assertEqual(payload, '{"api_key": "abc"}')
