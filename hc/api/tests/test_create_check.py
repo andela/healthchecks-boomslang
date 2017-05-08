@@ -40,7 +40,6 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(doc["tags"], "bar,baz")
         self.assertEqual(doc["last_ping"], None)
         self.assertEqual(doc["n_pings"], 0)
-        # Assert the expected last_ping and n_pings values
 
         self.assertTrue("schedule" not in doc)
         self.assertTrue("tz" not in doc)
@@ -57,14 +56,10 @@ class CreateCheckTestCase(BaseTestCase):
         resp = self.client.post(self.URL, payload,
                                 content_type="application/json",
                                 HTTP_X_API_KEY="abc")
-        # Make the post request and get the response
-        # resp = {'status_code': 201}  # This is just a placeholder variable
 
         self.assertEqual(resp.status_code, 201)
 
-    # Test for the assignment of channels
     def test_channel_assignment(self):
-        # create a channel
 
         check = Check()
         check.status = "up"
@@ -81,7 +76,6 @@ class CreateCheckTestCase(BaseTestCase):
         })
         count_after = channel.checks.count()
         self.assertEqual((count_after - count_before), 1)
-        # assert count change == 1
 
     def test_it_supports_unique(self):
         existing = Check(user=self.alice, name="Foo")
@@ -93,39 +87,27 @@ class CreateCheckTestCase(BaseTestCase):
             "unique": ["name"]
         })
 
-        # Expect 200 instead of 201
         self.assertEqual(r.status_code, 200)
 
-        # And there should be only one check in the database:
         self.assertEqual(Check.objects.count(), 1)
 
     def test_it_handles_missing_request_body(self):
-        # Make the post request with a missing body and get the response
 
         resp = self.post({})
-        # This is just a
-        # placeholder variable
         self.assertEqual(resp.status_code, 400)
 
     def test_it_handles_invalid_json(self):
-        # Make the post request with invalid json data type
-        # This is just a placeholder variable
         form = {"email": "alice@example.org"}
         resp = self.post(form)
         self.assertEqual(resp.status_code, 400)
-        # resp = {'status_code': 400, 'error': "could not parse request body"}
-        # self.assertEqual(resp['status_code'], 400)
-        # self.assertEqual(resp["error"], "could not parse request body")
 
     def test_it_rejects_wrong_api_key(self):
         r = self.post({"api_key": "wrong"})
         self.assertEqual(r.status_code, 403)
 
-    # Test for the 'timeout is too small' errors
     def test_timeout_is_too_small(self):
         self.post({"api_key": "abc", "timeout": 1},
                   expected_fragment="timeout is too small")
-    # Test for the 'timeout is too large' errors
 
     def test_timeout_is_too_large(self):
         resp = self.post({"api_key": "abc", "timeout": 36000000},
