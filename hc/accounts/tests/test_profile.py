@@ -23,12 +23,11 @@ class ProfileTestCase(BaseTestCase):
         self.assertTrue(len(token) > 10)
 
         # Assert that the token is set
-        self.assertTrue(token)
         self.assertEqual(response.status_code, 302)
 
         # Assert that the email was sent and check email content
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("Here's a link to set a password for your account on Healthchecks", mail.outbox[0].body)
+        self.assertIn("Here's a link to set a password for your account on {}:".format(settings.SITE_NAME), mail.outbox[0].body)
 
     def test_it_creates_api_key(self):
         self.client.login(username="alice@example.org", password="password")
@@ -56,7 +55,7 @@ class ProfileTestCase(BaseTestCase):
 
         # Assert that the email was sent and check email content
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("This is a monthly report sent by Healthchecks.", mail.outbox[0].body)
+        self.assertIn("This is a monthly report sent by {}.".format(settings.SITE_NAME), mail.outbox[0].body)
 
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")

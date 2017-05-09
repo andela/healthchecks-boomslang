@@ -19,7 +19,6 @@ class LoginTestCase(TestCase):
 
         form = {"email": "joan.awinja@andela.com"}
         resp = self.client.post("/accounts/login/", form)
-        # self.assertEqual(resp.status_code, 302)
         self.assertRedirects(resp, "/accounts/login_link_sent/")
 
         
@@ -35,7 +34,7 @@ class LoginTestCase(TestCase):
         subject = "Log in to %s" % settings.SITE_NAME
 
         ### Assert contents of the email body
-        self.assertIn('To log into Healthchecks',mail.outbox[0].body)
+        self.assertIn('To log into {}'.format(settings.SITE_NAME), mail.outbox[0].body)
 
         ### And check should be associated with the new user
         self.assertEqual(check.get_status("alice@example.org"), "new")
@@ -57,7 +56,6 @@ class LoginTestCase(TestCase):
         form = {"email": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
-        # self.assertEqual(r.status_code, 302)
         self.assertRedirects(r, "/accounts/login_link_sent/")
 
 
