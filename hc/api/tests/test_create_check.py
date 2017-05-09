@@ -16,13 +16,15 @@ class CreateCheckTestCase(BaseTestCase):
             self.assertEqual(r.json()["error"], expected_error)
 
         if expected_fragment:
+
             self.assertEqual(r.status_code, 400)
-            ### Assert that the expected error is the response error
+            self.assertIn(expected_fragment, r.json()['error'])
+            # Assert that the expected error is the response error
 
         return r
 
     def test_it_works(self):
-        r = self.post({
+        resp = self.post({
             "api_key": "abc",
             "name": "Foo",
             "tags": "bar,baz",
@@ -30,14 +32,14 @@ class CreateCheckTestCase(BaseTestCase):
             "grace": 60
         })
 
-        self.assertEqual(r.status_code, 201)
+        self.assertEqual(resp.status_code, 201)
 
-        doc = r.json()
+        doc = resp.json()
         assert "ping_url" in doc
         self.assertEqual(doc["name"], "Foo")
         self.assertEqual(doc["tags"], "bar,baz")
-        
-        ### Assert the expected last_ping and n_pings values
+        self.assertEqual(doc["last_ping"], None)
+        self.assertEqual(doc["n_pings"], 0)
 
         self.assertTrue("schedule" not in doc)
         self.assertTrue("tz" not in doc)
@@ -51,16 +53,29 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_accepts_api_key_in_header(self):
         payload = json.dumps({"name": "Foo"})
-        r = self.client.post(self.URL, payload,
-                             content_type="application/json",
-                             HTTP_X_API_KEY="abc")
+        resp = self.client.post(self.URL, payload,
+                                content_type="application/json",
+                                HTTP_X_API_KEY="abc")
 
-        ### Make the post request and get the response
-        r = {'status_code': 201} ### This is just a placeholder variable
+        self.assertEqual(resp.status_code, 201)
 
-        self.assertEqual(r['status_code'], 201)
+    def test_channel_assignment(self):
 
-    ### Test for the assignment of channels
+        check = Check()
+        check.status = "up"
+        check.user = self.alice
+        check.save()
+
+        channel = Channel(user=self.alice)
+        channel.save()
+        channel.checks.add(check)
+        count_before = channel.checks.count()
+        resp = self.post({
+            "api_key": "abc",
+            "channels": "*"
+        })
+        count_after = channel.checks.count()
+        self.assertEqual((count_after - count_before), 1)
 
     def test_it_supports_unique(self):
         existing = Check(user=self.alice, name="Foo")
@@ -72,30 +87,31 @@ class CreateCheckTestCase(BaseTestCase):
             "unique": ["name"]
         })
 
-        # Expect 200 instead of 201
         self.assertEqual(r.status_code, 200)
 
-        # And there should be only one check in the database:
         self.assertEqual(Check.objects.count(), 1)
 
     def test_it_handles_missing_request_body(self):
-        ### Make the post request with a missing body and get the response
-        r = {'status_code': 400, 'error': "wrong api_key"} ### This is just a placeholder variable
-        self.assertEqual(r['status_code'], 400)
-        self.assertEqual(r["error"], "wrong api_key")
+
+        resp = self.post({})
+        self.assertEqual(resp.status_code, 400)
 
     def test_it_handles_invalid_json(self):
-        ### Make the post request with invalid json data type
-        r = {'status_code': 400, 'error': "could not parse request body"} ### This is just a placeholder variable
-        self.assertEqual(r['status_code'], 400)
-        self.assertEqual(r["error"], "could not parse request body")
+        form = {"email": "alice@example.org"}
+        resp = self.post(form)
+        self.assertEqual(resp.status_code, 400)
 
     def test_it_rejects_wrong_api_key(self):
         r = self.post({"api_key": "wrong"})
         self.assertEqual(r.status_code, 403)
-    
-    ### Test for the 'timeout is too small' errors
-    ### Test for the 'timeout is too large' errors
+
+    def test_timeout_is_too_small(self):
+        self.post({"api_key": "abc", "timeout": 1},
+                  expected_fragment="timeout is too small")
+
+    def test_timeout_is_too_large(self):
+        resp = self.post({"api_key": "abc", "timeout": 36000000},
+                         expected_fragment="timeout is too large")
 
     def test_it_rejects_non_number_timeout(self):
         self.post({"api_key": "abc", "timeout": "oops"},

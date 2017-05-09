@@ -33,7 +33,6 @@ def check_api_key(f):
                 request.json = json.loads(request.body.decode("utf-8"))
             except ValueError:
                 return make_error("could not parse request body")
-
         if "HTTP_X_API_KEY" in request.META:
             api_key = request.META["HTTP_X_API_KEY"]
         else:
