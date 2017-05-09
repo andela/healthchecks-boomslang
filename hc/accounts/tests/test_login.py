@@ -11,6 +11,7 @@ class LoginTestCase(TestCase):
     def test_it_sends_link(self):
         check = Check()
         check.save()
+        count_before = User.objects.count()
 
         session = self.client.session
         session["welcome_code"] = str(check.code)
@@ -23,15 +24,18 @@ class LoginTestCase(TestCase):
 
         
         ### Assert that a user was created
+
         user = User.objects.get(email=form["email"])
-        self.assertTrue(user)
+        count_after = User.objects.count()
+        self.assertEqual(count_after,count_before + 1)
+
 
         # And email sent
         self.assertEqual(len(mail.outbox), 1)
         subject = "Log in to %s" % settings.SITE_NAME
 
         ### Assert contents of the email body
-        self.assertIn('To log into HealthCheck',mail.outbox[0].body)
+        self.assertIn('To log into Healthchecks',mail.outbox[0].body)
 
         ### And check should be associated with the new user
         self.assertEqual(check.get_status("alice@example.org"), "new")
