@@ -94,7 +94,6 @@ def _update(check, spec):
             check.assign_all_channels()
         elif spec["channels"] == "":
             check.channel_set.clear()
-
     return check
 
 
