@@ -16,7 +16,7 @@ class RemoveCheckTestCase(BaseTestCase):
         r = self.client.post(url)
         self.assertRedirects(r, "/checks/")
 
-        assert Check.objects.count() == 0
+        self.assertEqual(Check.objects.count(), 0)
 
     def test_team_access_works(self):
         url = "/checks/%s/remove/" % self.check.code
@@ -25,21 +25,21 @@ class RemoveCheckTestCase(BaseTestCase):
         # should work.
         self.client.login(username="bob@example.org", password="password")
         self.client.post(url)
-        assert Check.objects.count() == 0
+        self.assertEqual(Check.objects.count(), 0)
 
     def test_it_handles_bad_uuid(self):
         url = "/checks/not-uuid/remove/"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
-        assert r.status_code == 400
+        self.assertEqual(r.status_code, 400)
 
     def test_it_checks_owner(self):
         url = "/checks/%s/remove/" % self.check.code
 
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(url)
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 403)
 
     def test_it_handles_missing_uuid(self):
         # Valid UUID but there is no check for it:
@@ -47,7 +47,7 @@ class RemoveCheckTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
-        assert r.status_code == 404
+        self.assertEqual(r.status_code, 404)
 
     def test_it_rejects_get(self):
         url = "/checks/%s/remove/" % self.check.code

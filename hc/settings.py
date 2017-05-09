@@ -17,6 +17,8 @@ import dj_database_url
 DATABASES = {}
 
 DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,7 +27,7 @@ SECRET_KEY = "---"
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
 DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
-USE_PAYMENTS = True
+USE_PAYMENTS = False
 REGISTRATION_OPEN = True
 
 

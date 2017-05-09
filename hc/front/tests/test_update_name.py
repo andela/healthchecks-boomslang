@@ -18,7 +18,7 @@ class UpdateNameTestCase(BaseTestCase):
         self.assertRedirects(r, "/checks/")
 
         check = Check.objects.get(code=self.check.code)
-        assert check.name == "Alice Was Here"
+        self.assertEqual(check.name, "Alice Was Here")
 
     def test_team_access_works(self):
         url = "/checks/%s/name/" % self.check.code
@@ -30,7 +30,7 @@ class UpdateNameTestCase(BaseTestCase):
         self.client.post(url, data=payload)
 
         check = Check.objects.get(code=self.check.code)
-        assert check.name == "Bob Was Here"
+        self.assertEqual(check.name, "Bob Was Here")
 
     def test_it_checks_ownership(self):
         url = "/checks/%s/name/" % self.check.code
@@ -38,7 +38,7 @@ class UpdateNameTestCase(BaseTestCase):
 
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(url, data=payload)
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 403)
 
     def test_it_handles_bad_uuid(self):
         url = "/checks/not-uuid/name/"
@@ -46,7 +46,7 @@ class UpdateNameTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url, data=payload)
-        assert r.status_code == 400
+        self.assertEqual(r.status_code, 400)
 
     def test_it_handles_missing_uuid(self):
         # Valid UUID but there is no check for it:
@@ -55,7 +55,7 @@ class UpdateNameTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url, data=payload)
-        assert r.status_code == 404
+        self.assertEqual(r.status_code, 404)
 
     def test_it_sanitizes_tags(self):
         url = "/checks/%s/name/" % self.check.code
