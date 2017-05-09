@@ -11,17 +11,22 @@ class LoginTestCase(TestCase):
     def test_it_sends_link(self):
         check = Check()
         check.save()
+        count_before = User.objects.count()
 
         session = self.client.session
         session["welcome_code"] = str(check.code)
         session.save()
 
-        form = {"email": "alice@example.org"}
+        form = {"email": "joan.awinja@andela.com"}
+        resp = self.client.post("/accounts/login/", form)
+        self.assertRedirects(resp, "/accounts/login_link_sent/")
 
-        r = self.client.post("/accounts/login/", form)
-        assert r.status_code == 302
-
+        
         ### Assert that a user was created
+
+        user = User.objects.get(email=form["email"])
+        count_after = User.objects.count()
+        self.assertEqual(count_after,count_before + 1)
 
 
         # And email sent
@@ -29,8 +34,11 @@ class LoginTestCase(TestCase):
         subject = "Log in to %s" % settings.SITE_NAME
 
         ### Assert contents of the email body
+        self.assertIn('To log into {}'.format(settings.SITE_NAME), mail.outbox[0].body)
 
         ### And check should be associated with the new user
+        self.assertEqual(check.get_status("alice@example.org"), "new")
+
 
     def test_it_pops_bad_link_from_session(self):
         self.client.session["bad_link"] = True
@@ -48,7 +56,8 @@ class LoginTestCase(TestCase):
         form = {"email": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
-        assert r.status_code == 302
+        self.assertRedirects(r, "/accounts/login_link_sent/")
+
 
         # An user should have been created
         self.assertEqual(User.objects.count(), 1)
