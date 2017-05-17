@@ -1,4 +1,5 @@
 from django import forms
+from models import MONTHLY_REPORTS, WEEKLY_REPORTS, DAILY_REPORTS
 
 
 class LowercaseEmailField(forms.EmailField):
@@ -14,7 +15,12 @@ class EmailPasswordForm(forms.Form):
 
 
 class ReportSettingsForm(forms.Form):
-    reports_allowed = forms.BooleanField(required=False)
+    REPORT_CHOICES = (
+        (MONTHLY_REPORTS, 'Each month send me a summary of my checks'),
+        (WEEKLY_REPORTS, 'Each week send me a summary of my checks'),
+        (DAILY_REPORTS, 'Each day send me a summary of my checks'),)
+    reports_allowed = forms.ChoiceField(
+        widget=forms.RadioSelect, choices=REPORT_CHOICES)
 
 
 class SetPasswordForm(forms.Form):

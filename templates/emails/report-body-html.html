@@ -3,7 +3,7 @@
 
 {% block content %}
 Hello,<br />
-This is a monthly report sent by <a href="{% site_root %}">{% site_name %}</a>.
+This is a {{ report_date }}report sent by <a href="{% site_root %}">{% site_name %}</a>.
 
 <br />
 {% include "emails/summary-html.html" %}

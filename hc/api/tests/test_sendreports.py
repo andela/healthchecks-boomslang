@@ -36,7 +36,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertEqual(sent, 0)
 
     def test_it_obeys_reports_allowed_flag(self):
-        self.profile.reports_allowed = False
+        self.profile.reports_allowed = 0
         self.profile.save()
 
         sent = Command().handle_one_run()
