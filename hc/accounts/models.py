@@ -86,22 +86,23 @@ class Profile(models.Model):
         elif self.reports_allowed == DAILY_REPORTS:
             self.next_report_date = now + timedelta(days=1)
             report_date += "Daily"
+
         self.save()
 
-        if self.reports_allowed:
-            token = signing.Signer().sign(uuid.uuid4())
-            path = reverse("hc-unsubscribe-reports", args=[self.user.username])
-            unsub_link = "%s%s?token=%s" % (settings.SITE_ROOT, path, token)
+        
+        token = signing.Signer().sign(uuid.uuid4())
+        path = reverse("hc-unsubscribe-reports", args=[self.user.username])
+        unsub_link = "%s%s?token=%s" % (settings.SITE_ROOT, path, token)
 
-            ctx = {
-                "checks": self.user.check_set.order_by("created"),
-                "now": now,
-                "unsub_link": unsub_link,
-                "report_date": report_date
+        ctx = {
+            "checks": self.user.check_set.order_by("created"),
+            "now": now,
+            "unsub_link": unsub_link,
+            "report_date": report_date
 
                 }
 
-            emails.report(self.user.email, ctx)
+        emails.report(self.user.email, ctx)
 
     def invite(self, user):
         member = Member(team=self, user=user)
