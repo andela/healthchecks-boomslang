@@ -1,5 +1,5 @@
 from django import forms
-from models import MONTHLY_REPORTS, WEEKLY_REPORTS, DAILY_REPORTS
+from hc.accounts.models import MONTHLY_REPORTS, WEEKLY_REPORTS, DAILY_REPORTS
 
 
 class LowercaseEmailField(forms.EmailField):
