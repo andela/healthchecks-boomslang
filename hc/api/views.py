@@ -79,12 +79,14 @@ def _update(check, spec):
     if "grace" in spec:
         check.grace = td(seconds=spec["grace"])
 
+    if "nag" in spec:
+        check.nag = td(seconds=spec["nag"])    
+
     if "schedule" in spec:
         check.kind = "cron"
         check.schedule = spec["schedule"]
         if "tz" in spec:
             check.tz = spec["tz"]
-
     check.save()
 
     # This needs to be done after saving the check, because of
@@ -113,8 +115,10 @@ def checks(request):
         if check is None:
             check = Check(user=request.user)
             created = True
-
+        # if "nag" in request.json:
+        #     check.nag = td(seconds=request.json["nag"])
         _update(check, request.json)
+
 
         return JsonResponse(check.to_dict(), status=201 if created else 200)
 

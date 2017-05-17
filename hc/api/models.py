@@ -19,10 +19,12 @@ STATUSES = (
     ("up", "Up"),
     ("down", "Down"),
     ("new", "New"),
-    ("paused", "Paused")
+    ("paused", "Paused"),
+    ("nag", "Nag")
 )
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
+DEFAULT_NAG = td(minutes=1)
 CHECK_KINDS = (("simple", "Simple"),
                ("cron", "Cron"))
 
@@ -67,6 +69,9 @@ class Check(models.Model):
     last_ping = models.DateTimeField(null=True, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
+    nag = models.DurationField(default=DEFAULT_NAG)
+    nag_after = models.DateTimeField(null=True, blank=True)
+    last_nag = models.DateTimeField(null=True, blank=True)
 
     def name_then_code(self):
         if self.name:
@@ -125,6 +130,11 @@ class Check(models.Model):
 
         return self.get_grace_start() + self.grace
 
+    def get_nag_after(self):
+        """Return the datetime when the first nag is seng"""
+
+        return self.get_grace_start() + self.grace + self.nag
+
     def in_grace_period(self):
         """ Return True if check is currently in grace period. """
 
@@ -172,6 +182,11 @@ class Check(models.Model):
             result["next_ping"] = None
 
         return result
+
+    def update_nag(self):
+        now = timezone.now()
+        self.nag_after = now + self.nag
+        self.last_nag = now
 
     @classmethod
     def check(cls, **kwargs):
@@ -349,6 +364,7 @@ class Channel(models.Model):
 
 
 class Notification(models.Model):
+
     class Meta:
         get_latest_by = "created"
 

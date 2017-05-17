@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
-from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
+from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, DEFAULT_NAG, Channel, Check,
                            Ping, Notification)
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm,
@@ -40,7 +40,7 @@ def my_checks(request):
     checks = list(q)
 
     counter = Counter()
-    down_tags, grace_tags = set(), set()
+    down_tags, grace_tags, nag_tags= set(), set(), set()
     for check in checks:
         status = check.get_status()
         for tag in check.tags_list():
@@ -53,6 +53,8 @@ def my_checks(request):
                 down_tags.add(tag)
             elif check.in_grace_period():
                 grace_tags.add(tag)
+            elif status == "nag":
+                nag_tags.add(tag)    
 
     ctx = {
         "page": "checks",
@@ -61,6 +63,7 @@ def my_checks(request):
         "tags": counter.most_common(),
         "down_tags": down_tags,
         "grace_tags": grace_tags,
+        "nag_tags": nag_tags,
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": all_timezones
     }
@@ -177,6 +180,7 @@ def update_timeout(request, code):
         check.kind = "simple"
         check.timeout = td(seconds=form.cleaned_data["timeout"])
         check.grace = td(seconds=form.cleaned_data["grace"])
+        check.nag = td(seconds=form.cleaned_data["nag"])
     elif kind == "cron":
         form = CronForm(request.POST)
         if not form.is_valid():
@@ -186,7 +190,7 @@ def update_timeout(request, code):
         check.schedule = form.cleaned_data["schedule"]
         check.tz = form.cleaned_data["tz"]
         check.grace = td(minutes=form.cleaned_data["grace"])
-
+        check.nag = td(seconds=form.cleaned_data["nag"])
     if check.last_ping:
         check.alert_after = check.get_alert_after()
 

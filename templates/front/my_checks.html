@@ -22,6 +22,8 @@
                 <button class="btn btn-danger btn-xs" data-toggle="button">{{ tag }}</button>
             {% elif tag in grace_tags %}
                 <button class="btn btn-warning btn-xs" data-toggle="button">{{ tag }}</button>
+            {% elif tag in nag_tags %}
+                <button class="btn btn-primary btn-xs" data-toggle="button">{{ tag }}</button>    
             {% else %}
                 <button class="btn btn-default btn-xs" data-toggle="button">{{ tag }}</button>
             {% endif %}
@@ -116,6 +118,7 @@
                 <input type="hidden" name="kind" value="simple" />
                 <input type="hidden" name="timeout" id="update-timeout-timeout" />
                 <input type="hidden" name="grace" id="update-timeout-grace" />
+                <input type="hidden" name="nag" id="update-timeout-nag" />
 
                 <div class="modal-body">
                     <div class="update-timeout-info text-center">
@@ -148,7 +151,24 @@
                         </span>
                     </div>
 
+
                     <div id="grace-slider"></div>
+
+                    <div class="update-timeout-info text-center">
+                        <span
+                            class="update-timeout-label"
+                            data-toggle="tooltip"
+                            title="When check is down, how much time to wait until a nag alert is sent">
+                            Nag Time
+                        </span>
+                        <span
+                            id="nag-slider-value"
+                            class="update-timeout-value">
+                            1 day
+                        </span>
+                    </div>  
+
+                    <div id="nag-slider"></div>
 
                     <div class="update-timeout-terms">
                         <p>
@@ -160,6 +180,8 @@
                             When a check is late, how much time to wait until alert is sent.
                         </p>
                     </div>
+                    
+
                 </div>
 
                 <div class="modal-footer">
