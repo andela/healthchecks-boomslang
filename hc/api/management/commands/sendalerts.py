@@ -94,11 +94,9 @@ class Command(BaseCommand):
         use_threads = options["use_threads"]
         if not options["loop"]:
             x = 0
-            print("not options['loop']")
             while self.handle_one(use_threads):
                 # returns True when there are more alerts to send.
                 x += 1
-                print("x: {}".format(x))
             return "Sent %d alert(s)" % x
 
         self.stdout.write("sendalerts is now running")
@@ -108,7 +106,6 @@ class Command(BaseCommand):
 
             while self.handle_one(use_threads):
                 ticks = 0
-            print("ticks: {}".format(ticks))
             ticks += 1
             time.sleep(1)
             if ticks % 5 == 0:

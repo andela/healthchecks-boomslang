@@ -36,8 +36,6 @@ class ListChecksTestCase(BaseTestCase):
         resp = self.get()
         ### Assert the response status code
         self.assertEqual(resp.status_code, 200)
-        import ipdb
-        ipdb.set_trace()
         doc = resp.json()
         self.assertTrue("checks" in doc)
 
