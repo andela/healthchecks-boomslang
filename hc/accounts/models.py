@@ -93,15 +93,15 @@ class Profile(models.Model):
             path = reverse("hc-unsubscribe-reports", args=[self.user.username])
             unsub_link = "%s%s?token=%s" % (settings.SITE_ROOT, path, token)
 
-        ctx = {
-            "checks": self.user.check_set.order_by("created"),
-            "now": now,
-            "unsub_link": unsub_link,
-            "report_date": report_date
+            ctx = {
+                "checks": self.user.check_set.order_by("created"),
+                "now": now,
+                "unsub_link": unsub_link,
+                "report_date": report_date
 
-            }
+                }
 
-        emails.report(self.user.email, ctx)
+            emails.report(self.user.email, ctx)
 
     def invite(self, user):
         member = Member(team=self, user=user)
