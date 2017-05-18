@@ -190,7 +190,7 @@ def update_timeout(request, code):
         check.schedule = form.cleaned_data["schedule"]
         check.tz = form.cleaned_data["tz"]
         check.grace = td(minutes=form.cleaned_data["grace"])
-        check.nag = td(seconds=form.cleaned_data["nag"])
+        
     if check.last_ping:
         check.alert_after = check.get_alert_after()
 
