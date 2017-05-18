@@ -41,8 +41,22 @@ class NotifyTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
 
-    ### Test that the web hooks handle connection errors 
-    ### Test that the web hooks handle error 500s
+    @patch("hc.api.transports.requests.request", side_effect=ConnectionError)
+    def test_webhooks_handle_connection_errors(self, mock_get):
+        self._setup_data("webhook", "http://example")
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        # Test that the web hooks handle connection errors
+        self.assertEqual(n.error, "Connection failed")
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_error_500(self, mock_get):
+
+        self._setup_data("webhook", "http://example")
+        self.channel.notify(self.check)
+        # Test that the web hooks handle error 500s
+        mock_get.return_value.status_code = 500
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_ignore_up_events(self, mock_get):

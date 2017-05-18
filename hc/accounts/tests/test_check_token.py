@@ -14,13 +14,16 @@ class CheckTokenTestCase(BaseTestCase):
         self.assertContains(r, "You are about to log in")
 
     def test_it_redirects(self):
-        r = self.client.post("/accounts/check_token/alice/secret-token/")
-        self.assertRedirects(r, "/checks/")
+        response = self.client.post("/accounts/check_token/alice/secret-token/")
+        self.assertRedirects(response, "/checks/")
 
         # After login, token should be blank
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.token, "")
 
     ### Login and test it redirects already logged in
+        self.assertEqual(response.status_code, 302)
 
     ### Login with a bad token and check that it redirects
+        c = self.client.post("/accounts/check_token/rose/secret-token/")
+        self.assertEqual(c.status_code, 302)

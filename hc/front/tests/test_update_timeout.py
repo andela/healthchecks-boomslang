@@ -95,6 +95,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
         check = Check.objects.get(code=self.check.code)
         self.assertEqual(check.timeout.total_seconds(), 86400)
+        self.assertEqual(check.timeout.total_seconds(), 7200)
 
     def test_it_handles_bad_uuid(self):
         url = "/checks/not-uuid/timeout/"

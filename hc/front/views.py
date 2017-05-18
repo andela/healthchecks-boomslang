@@ -71,6 +71,38 @@ def my_checks(request):
     return render(request, "front/my_checks.html", ctx)
 
 
+def failedchecks(request):
+    q = Check.objects.filter(user=request.team.user).order_by("created")
+    checks = list(q)
+    failed_checks = list()
+
+    counter = Counter()
+    down_tags, grace_tags = set(), set()
+    for check in checks:
+        status = check.get_status()
+        if status == "down":
+            failed_checks.append(check)
+            for tag in check.tags_list():
+                if tag == "":
+                    continue
+                counter[tag] += 1
+                down_tags.add(tag)
+    checks = failed_checks
+
+    ctx = {
+        "page": "failedchecks",
+        "checks": checks,
+        "now": timezone.now(),
+        "tags": counter.most_common(),
+        "down_tags": down_tags,
+        "grace_tags": grace_tags,
+        "ping_endpoint": settings.PING_ENDPOINT,
+        "timezones": all_timezones
+    }
+
+    return render(request, "front/failed_checks.html", ctx)
+
+
 def _welcome_check(request):
     check = None
     if "welcome_code" in request.session:
