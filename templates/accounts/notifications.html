@@ -29,22 +29,35 @@
     <div class="col-sm-9 col-md-6">
         <div class="panel panel-default">
             <div class="panel-body settings-block">
-                <h2>Monthly Reports</h2>
+                <h2>Notification Reports</h2>
                 <form method="post">
                     {% csrf_token %}
                     <label>
                         <input
                             name="reports_allowed"
-                            type="checkbox"
-                            {% if profile.reports_allowed %} checked {% endif %}>
+                            type="radio" value="1" {{ monthly_checked }} >
                         Each month send me a summary of my checks
+                    </label>
+                    <label>
+                        <input
+                            name="reports_allowed"
+                            type="radio" value="2"
+                            {{ weekly_checked }} >
+                        Each week send me a summary of my checks
+                    </label>
+                    <label>
+                        <input
+                            name="reports_allowed"
+                            type="radio" value="3"
+                            {{ daily_checked }} >
+                        Each day send me a summary of my checks
                     </label>
                     <button
                         name="update_reports_allowed"
                         type="submit"
                         class="btn btn-default pull-right">Save</button>
                 </form>
-            </div>
+
         </div>
     </div>
 </div>

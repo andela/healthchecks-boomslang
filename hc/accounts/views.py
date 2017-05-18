@@ -16,7 +16,7 @@ from django.views.decorators.http import require_POST
 from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
                                RemoveTeamMemberForm, ReportSettingsForm,
                                SetPasswordForm, TeamNameForm)
-from hc.accounts.models import Profile, Member
+from hc.accounts.models import Profile, Member, MONTHLY_REPORTS, WEEKLY_REPORTS, DAILY_REPORTS
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
 from hc.payments.models import Subscription
@@ -212,7 +212,7 @@ def profile(request):
     ctx = {
         "page": "profile",
         "profile": profile,
-        "show_api_key": show_api_key
+        "show_api_key": show_api_key,
     }
 
     return render(request, "accounts/profile.html", ctx)
@@ -233,10 +233,18 @@ def notifications(request):
             profile.reports_allowed = form.cleaned_data["reports_allowed"]
             profile.save()
             messages.success(request, "Your settings have been updated!")
+    reports_duration = int(profile.reports_allowed)
+    
+    monthly_checked = "checked" if reports_duration == MONTHLY_REPORTS else ''
+    weekly_checked = "checked" if reports_duration == WEEKLY_REPORTS else ''
+    daily_checked = "checked" if reports_duration == DAILY_REPORTS else ''
 
     ctx = {
         "page": "profile",
         "profile": profile,
+        "monthly_checked": monthly_checked,
+        "weekly_checked": weekly_checked,
+        "daily_checked": daily_checked
     }
 
     return render(request, "accounts/notifications.html", ctx)
@@ -305,7 +313,7 @@ def unsubscribe_reports(request, username):
         return HttpResponseBadRequest()
 
     user = User.objects.get(username=username)
-    user.profile.reports_allowed = False
+    user.profile.reports_allowed = 0
     user.profile.save()
 
     return render(request, "accounts/unsubscribed.html")

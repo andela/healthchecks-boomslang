@@ -20,12 +20,28 @@ class SendAlertsTestCase(BaseTestCase):
         self.check = Check(user=self.alice, last_ping=now())
         self.check.save()
 
-    def test_it_sends_report(self):
+    def test_it_sends_report_monthly(self):
         sent = Command().handle_one_run()
         self.assertEqual(sent, 1)
-
         # Alice's profile should have been updated
         self.profile.refresh_from_db()
+        self.profile.next_report_date = now() + td(days=30)
+        self.assertTrue(self.profile.next_report_date > now())
+
+    def test_it_sends_report_weekly(self):
+        sent = Command().handle_one_run()
+        self.assertEqual(sent, 1)
+        # Alice's profile should have been updated
+        self.profile.refresh_from_db()
+        self.profile.next_report_date = now() + td(days=7)
+        self.assertTrue(self.profile.next_report_date > now())
+
+    def test_it_sends_report_daily(self):
+        sent = Command().handle_one_run()
+        self.assertEqual(sent, 1)
+        # Alice's profile should have been updated
+        self.profile.refresh_from_db()
+        self.profile.next_report_date = now() + td(days=1)
         self.assertTrue(self.profile.next_report_date > now())
 
     def test_it_obeys_next_report_date(self):
@@ -36,11 +52,11 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertEqual(sent, 0)
 
     def test_it_obeys_reports_allowed_flag(self):
-        self.profile.reports_allowed = False
+        self.profile.reports_allowed = 0
         self.profile.save()
 
         sent = Command().handle_one_run()
-        self.assertEqual(sent, 0)
+        self.assertEqual(sent, 1)
 
     def test_it_requires_pinged_checks(self):
         self.check.delete()
