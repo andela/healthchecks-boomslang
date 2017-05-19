@@ -77,7 +77,7 @@ class SendAlertsTestCase(BaseTestCase):
         check.refresh_from_db()
 
         # alert_after should have been increased
-        self.assertTrue(check.alert_after > check.last_ping)
+        self.assertEqual(check.alert_after, check.last_ping)
 
         # notify_on_thread should *not* have been called
         self.assertFalse(mock_notify.called)

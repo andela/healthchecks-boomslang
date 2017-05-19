@@ -34,6 +34,7 @@ class ListChecksTestCase(BaseTestCase):
 
     def test_it_works(self):
         resp = self.get()
+
         # ## Assert the response status code
         self.assertEqual(resp.status_code, 200)
         doc = resp.json()
@@ -69,6 +70,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(checks['Alice 2']['n_pings'], 0)
         self.assertNotEqual(checks['Alice 2']['pause_url'],
                             self.a2.url())
+
 
     def test_it_shows_only_users_checks(self):
         bobs_check = Check(user=self.bob, name="Bob 1")

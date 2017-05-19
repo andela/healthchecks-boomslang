@@ -47,7 +47,6 @@ class Command(BaseCommand):
         """ Process a single check.  """
 
         now = timezone.now()
-
         # Look for checks that are going down
         q = self.owned.filter(alert_after__lt=now, status="up")
         check = q.first()
@@ -57,15 +56,24 @@ class Command(BaseCommand):
             q = self.owned.filter(alert_after__gt=now, status="down")
             check = q.first()
 
+        # checks that are still down
+        if not check:
+            q = self.owned.filter(nag_after__lt=now, status="down")
+            check = q.first()
+
         if check is None:
             return False
 
         q = Check.objects.filter(id=check.id, status=check.status)
         current_status = check.get_status()
         if check.status == current_status:
+            if check.status == "down":
+                check.update_nag()
+                check.save()
+                notify(check.id, self.stdout)
             # Stored status is already up-to-date. Update alert_after
             # as needed but don't send notifications
-            q.update(alert_after=check.get_alert_after())
+
             return True
         else:
             # Atomically update status to the opposite
@@ -98,10 +106,9 @@ class Command(BaseCommand):
 
             while self.handle_one(use_threads):
                 ticks = 0
-
             ticks += 1
-            time.sleep(2)
-            if ticks % 60 == 0:
+            time.sleep(1)
+            if ticks % 5 == 0:
                 formatted = timezone.now().isoformat()
                 self.stdout.write("-- MARK %s --" % formatted)
 

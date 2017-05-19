@@ -96,6 +96,34 @@ $(function () {
         $("#update-timeout-grace").val(rounded);
     });
 
+    var nagSlider = document.getElementById("nag-slider");
+    noUiSlider.create(nagSlider, {
+        start: [20],
+        connect: "lower",
+        range: {
+            'min': [60, 60],
+            '33%': [3600, 3600],
+            '66%': [86400, 86400],
+            '83%': [604800, 604800],
+            'max': 2592000,
+        },
+        pips: {
+            mode: 'values',
+            values: [60, 1800, 3600, 43200, 86400, 604800, 2592000],
+            density: 4,
+            format: {
+                to: secsToText,
+                from: function() {}
+            }
+        }
+    });
+
+    nagSlider.noUiSlider.on("update", function(a, b, value) {
+        var rounded = Math.round(value);
+        $("#nag-slider-value").text(secsToText(rounded));
+        $("#update-timeout-nag").val(rounded);
+    });
+
     function showSimple() {
         $("#update-timeout-form").show();
         $("#update-cron-form").hide();
@@ -139,6 +167,8 @@ $(function () {
         // Simple
         periodSlider.noUiSlider.set(this.dataset.timeout);
         graceSlider.noUiSlider.set(this.dataset.grace);
+        nagSlider.noUiSlider.set(this.dataset.nag);
+
 
         // Cron
         currentPreviewHash = "";
