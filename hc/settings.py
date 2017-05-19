@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 import os
+import sendgrid
 import warnings
 import dj_database_url
 
@@ -18,12 +19,6 @@ DATABASES = {}
 
 DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
-
-EMAIL_HOST = os.environ['EMAIL_HOST']
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
-EMAIL_USE_TLS = True
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -118,6 +113,10 @@ COMPRESS_OFFLINE = True
 # Discord integration -- override these in local_settings
 DISCORD_CLIENT_ID = None
 DISCORD_CLIENT_SECRET = None
+
+# sendgrid config
+EMAIL_BACKEND = 'sgbackend.SendGridBackend'
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 
 # Slack integration -- override these in local_settings
 SLACK_CLIENT_ID = None
