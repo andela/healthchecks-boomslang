@@ -22,10 +22,13 @@ premailer==2.9.6
 psycopg2==2.7.1
 pyparsing==2.2.0
 python-dateutil==2.6.0
+python-http-client==2.2.1
 pytz==2016.7
 rcssmin==1.0.6
 requests==2.9.1
 rjsmin==1.0.12
+sendgrid==3.6.5
+sendgrid-django==4.0.4
 six==1.10.0
 static3==0.7.0
 twx.botapi==2.1.0
