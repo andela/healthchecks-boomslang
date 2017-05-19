@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 import os
+import sendgrid
 import warnings
 import dj_database_url
 
@@ -112,6 +113,10 @@ COMPRESS_OFFLINE = True
 # Discord integration -- override these in local_settings
 DISCORD_CLIENT_ID = None
 DISCORD_CLIENT_SECRET = None
+
+# sendgrid config
+EMAIL_BACKEND = 'sgbackend.SendGridBackend'
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 
 # Slack integration -- override these in local_settings
 SLACK_CLIENT_ID = None
